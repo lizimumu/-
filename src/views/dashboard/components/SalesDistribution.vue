@@ -29,6 +29,7 @@ export default {
   },
   methods: {
     async getSalesDistriBution(index) {
+      if (index === 0) { this.time = getCurrentWeek() }
       if (index === 1) {
         // this.time = this.month
         this.time = {
@@ -99,6 +100,9 @@ export default {
           }
 
         },
+        grid: {
+          left: '100px'
+        },
         yAxis: {
           type: 'value',
           name: '单位：元',
@@ -136,7 +140,7 @@ export default {
 
 <style scoped>
 #main2{
-  width: 100%;
+  width: 110%;
   height: 320px;
 }
 </style>

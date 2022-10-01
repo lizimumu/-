@@ -33,6 +33,8 @@ export default {
   methods: {
     async getSell(index) {
       if (index === 0) {
+        this.time = getCurrentWeek()
+        this.num = 1
         const date = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']
         try {
           const { data } = await getSellInfo(this.num, this.time.start_time, this.time.end_time)
@@ -59,10 +61,7 @@ export default {
         }
       }
       if (index === 2) {
-        this.time = {
-          start_time: '2022-01-01',
-          end_time: '2022-10-05'
-        }
+        this.time = this.year
         this.num = 2
         const date = ['2022年1月', '', '', '2022年4月', '', '', '2022年7月', '', '', '2022年10月']
         try {
