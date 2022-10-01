@@ -48,23 +48,24 @@ export default {
           start_time: '2022-09-01',
           end_time: '2022-09-30'
         }
-        const date = ['9月1日', '9月6日', '9月11日', '9月6日', '9月21日', '9月26日']
+        console.log(dayjs('2022-10-20').format('MM月DD日'))
+
         try {
           const { data } = await getSellInfo(this.num, this.time.start_time, this.time.end_time)
           console.log(data)
-          this.data.xAxis = date
+          data.xAxis.forEach(item => {
+            dayjs(item).format('MM月DD日')
+          })
+          this.data.xAxis = data.xAxis
           this.data.series = data.series
         } catch (e) {
           console.log(e)
         }
       }
       if (index === 2) {
-        this.time = {
-          start_time: '2022-01-01',
-          end_time: '2022-10-05'
-        }
+        this.time = this.year
         this.num = 2
-        const date = ['2022年1月', '', '', '2022年4月', '', '', '2022年7月', '', '', '2022年10月']
+        const date = ['2022年1月', '', '2022年3月', '', '2022年5月', '', '2022年7月', '', '2022年9月', '']
         try {
           const { data } = await getSellInfo(this.num, this.time.start_time, this.time.end_time)
           console.log(data)
