@@ -49,14 +49,12 @@ export default {
           end_time: '2022-09-30'
         }
         console.log(dayjs('2022-10-20').format('MM月DD日'))
-
+        const date = ['9月1日', '9月6日', '9月11日', '9月6日', '9月21日', '9月26日']
         try {
           const { data } = await getSellInfo(this.num, this.time.start_time, this.time.end_time)
-          console.log(data)
-          data.xAxis.forEach(item => {
-            dayjs(item).format('MM月DD日')
-          })
-          this.data.xAxis = data.xAxis
+
+          console.log(this.data.xAxis)
+          this.data.xAxis = date
           this.data.series = data.series
         } catch (e) {
           console.log(e)
