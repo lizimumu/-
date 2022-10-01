@@ -12,7 +12,7 @@ export default {
       data: {},
       month: {
         start_time: dayjs().startOf('month').format('YYYY-MM-DD'),
-        end_time: dayjs().endOf('month').format('YYYY-MM-DD')
+        end_time: dayjs(new Date()).format('YYYY-MM-DD')
       },
       year: {
         start_time: dayjs().startOf('year').format('YYYY-MM-DD'),
