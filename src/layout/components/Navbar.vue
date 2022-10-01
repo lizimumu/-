@@ -6,7 +6,7 @@
     <div class="right">
       <div><img src="../../assets/common/user.png" alt=""></div>
       <div class="user">欢迎你,<span style="margin-left: 8px;">{{ $store.state.user. userInfo.userName }}</span></div>
-      <el-tooltip content="退出" placement="top" class="tuichu">
+      <el-tooltip content="退出登录" placement="top" class="tuichu">
         <span @click="quit">退出 <i
           class="el-icon-caret-bottom"
         /><span />
