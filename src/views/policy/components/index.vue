@@ -49,7 +49,7 @@
       <el-dialog title="策略详情" :visible.sync="dialogVisible" width="630px">
         <el-form>
           <el-form-item label="策略名称：">
-            <span>九折优惠</span>
+            <span>{{ policyName }}</span>
           </el-form-item>
           <el-form-item label="活动区域：" class="activeArea">
             <span>
@@ -154,7 +154,8 @@ export default {
       formLabelWidth: '100px',
       policyId: null, // 点击详情的id
       exitPolicyId: null,
-      title: '修改策略'
+      title: '修改策略',
+      policyName: ''
     }
   },
   created() {
@@ -173,6 +174,7 @@ export default {
     },
     async  getDetail(val) {
       this.policyId = val.policyId
+      this.policyName = val.policyName
       const { data } = await getPolicyDetailAPI(this.policyId, this.policyDetailPage)
       // console.log(data)
       this.policyDetailList = data
