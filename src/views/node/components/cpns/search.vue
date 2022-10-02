@@ -1,20 +1,27 @@
 <template>
   <div><div class="search">
     <label class="el-form-item__label">区域搜索：</label><el-input v-model="input" size="medium" class="input" placeholder="请输入" />
-    <el-button class="but" type="primary" size="small">
+    <el-button class="but" type="primary" size="small" @click="search">
       <span class="iconfont icon-sousuo" />
       查询</el-button>
   </div></div>
 </template>
 
 <script>
+import { getAreaListAPI } from '@/api/node'
 export default {
   data() {
     return {
       input: ''
     }
+  },
+  methods: {
+    async   search() {
+      const { data } = await getAreaListAPI(1, 10, this.input)
+      console.log(data)
+      this.$emit('search', data)
+    }
   }
-
 }
 </script>
 
