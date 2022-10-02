@@ -64,14 +64,10 @@ export const getSalesDistriButionAPI = (start, end) =>
    * @returns
    */
 export const getCurrentWeek = () => {
-  var now = new Date()
-  const nowWeek = now.getDay()
-  var num = +new Date() - 1000 * 60 * 60 * 24 * (nowWeek - 1)
-  const startTime = new Date(num)
-  console.log(startTime)
-  // console.log(num)
-  const end_time = dayjs(now).format('YYYY-MM-DD')
-  const start_time = dayjs(startTime).format('YYYY-MM-DD')
+  var date = new Date()
+  var day = date.getDay() || 7
+  var start_time = dayjs(new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1 - day)).format('YYYY-MM-DD')
+  var end_time = dayjs(new Date()).format('YYYY-MM-DD')
   return {
     start_time,
     end_time

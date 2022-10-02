@@ -12,7 +12,7 @@ export default {
       data: {},
       month: {
         start_time: dayjs().startOf('month').format('YYYY-MM-DD'),
-        end_time: dayjs().endOf('month').format('YYYY-MM-DD')
+        end_time: dayjs(new Date()).format('YYYY-MM-DD')
       },
       year: {
         start_time: dayjs().startOf('year').format('YYYY-MM-DD'),
@@ -29,15 +29,15 @@ export default {
   },
   methods: {
     async getSalesDistriBution(index) {
+      if (index === 0) {
+        this.time = getCurrentWeek()
+      }
       if (index === 1) {
-        // this.time = this.month
-        this.time = {
-          start_time: '2022-09-01',
-          end_time: '2022-09-30'
-        }
+        this.time = this.month
       }
       if (index === 2) {
         this.time = this.year
+        console.log(this.year)
       }
       try {
         const { data } = await getSalesDistriButionAPI(this.time.start_time, this.time.end_time)
@@ -99,6 +99,9 @@ export default {
           }
 
         },
+        grid: {
+          left: '100px'
+        },
         yAxis: {
           type: 'value',
           name: '单位：元',
@@ -108,6 +111,7 @@ export default {
               color: '#b5b5b5' // 分割线颜色
             }
           }
+
         },
         series: [
           {
@@ -136,7 +140,8 @@ export default {
 
 <style scoped>
 #main2{
-  width: 100%;
+
+  width: 110%;
   height: 320px;
 }
 </style>

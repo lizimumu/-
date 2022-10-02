@@ -18,7 +18,7 @@ export default {
       data: {},
       month: {
         start_time: dayjs().startOf('month').format('YYYY-MM-DD'),
-        end_time: dayjs().endOf('month').format('YYYY-MM-DD')
+        end_time: dayjs(new Date()).format('YYYY-MM-DD')
       },
       year: {
         start_time: dayjs().startOf('year').format('YYYY-MM-DD'),
@@ -33,6 +33,8 @@ export default {
   methods: {
     async getSell(index) {
       if (index === 0) {
+        this.num = 1
+        this.time = getCurrentWeek()
         const date = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']
         try {
           const { data } = await getSellInfo(this.num, this.time.start_time, this.time.end_time)
@@ -48,10 +50,12 @@ export default {
           start_time: '2022-09-01',
           end_time: '2022-09-30'
         }
+        console.log(dayjs('2022-10-20').format('MM月DD日'))
         const date = ['9月1日', '9月6日', '9月11日', '9月6日', '9月21日', '9月26日']
         try {
           const { data } = await getSellInfo(this.num, this.time.start_time, this.time.end_time)
-          console.log(data)
+
+          console.log(this.data.xAxis)
           this.data.xAxis = date
           this.data.series = data.series
         } catch (e) {
@@ -59,12 +63,9 @@ export default {
         }
       }
       if (index === 2) {
-        this.time = {
-          start_time: '2022-01-01',
-          end_time: '2022-10-05'
-        }
+        this.time = this.year
         this.num = 2
-        const date = ['2022年1月', '', '', '2022年4月', '', '', '2022年7月', '', '', '2022年10月']
+        const date = ['2022年1月', '', '2022年3月', '', '2022年5月', '', '2022年7月', '', '2022年9月', '']
         try {
           const { data } = await getSellInfo(this.num, this.time.start_time, this.time.end_time)
           console.log(data)
