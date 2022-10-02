@@ -1,6 +1,6 @@
 <template>
   <div class="policy-container">
-    <el-dialog title="策略详情" :visible.sync="dialogVisible" width="630px">
+    <el-dialog title="策略详情" :visible.sync="dialogVisible" width="630px" :before-close="handleClose">
       <el-form :model="form">
         <el-form-item label="策略名称：">
           <span>九折优惠</span>
@@ -15,63 +15,75 @@
               />
               <el-table-column
                 label="点位名称"
-                property="name"
+                property="nodeName"
               />
-              <el-table-column property="address" label="设备编号" width="150px" />
+              <el-table-column property="innerCode" label="设备编号" width="150px" />
             </el-table>
           </span>
         </el-form-item>
       </el-form>
 
       <div slot="footer" class="dialog-footer">
-        <span>共{{ totalCount }}条记录</span>
-        <span>第{{ pageIndex }}/{{ totalPage }}页</span>
-        <el-button @click="dialogVisible = false">上一页</el-button>
-        <el-button type="primary" @click="dialogVisible = false">下一页</el-button>
-      </div>
-    </el-dialog>
+        <div class="pagination">
+          <div class="pagination__total">
+            <control-page
+              :total-count="policyDetailList.totalCount"
+              :total-page="policyDetailList.totalPage"
+              :page-index="policyDetailList.pageIndex"
+              :policy-id="policyId"
+              @toPrevPolicy="toPrevPolicy"
+              @toNextPolicy="toNextPolicy"
+            />
+          </div>
+        </div>
+      </div></el-dialog>
 
   </div>
 </template>
 
 <script>
+import ControlPage from '@/components/controlPage/index.vue'
+
 export default {
+  components: {
+    ControlPage
+  },
   props: {
     dialogVisible: {
       type: Boolean,
       default: false
+    },
+    policyDetailList: {
+      type: Object,
+      default: () => ({})
+    },
+    policyId: {
+      type: [String, Number],
+      default: 0
     }
   },
   data() {
     return {
-      gridData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }],
+      gridData: [],
       form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
       },
-      formLabelWidth: '629px'
+      totalCount: 0
+    }
+  },
+  created() {
+    this.gridData = this.policyDetailList.currentPageRecords
+    console.log(this.gridData)
+  },
+  methods: {
+    toPrevPolicy() {
+      this.$emit('toPrevPolicy')
+      console.log(55)
+    },
+    toNextPolicy() {
+      this.$emit('toNextPolicy', this.policyId)
+    },
+    handleClose() {
+      this.$emit('update:dialogVisible', false)
     }
   }
 }
@@ -102,7 +114,58 @@ font-weight: 400;
 }
 .el-dialog__body {
 padding: 50px;
+padding-bottom: 0px;
+}
+.dialog-footer {
+    // background: #fff;
+    padding: 32px 16px;
+    padding-top: 0;
+    padding-left: 110px;
+    white-space: nowrap;
+    .pagination {
+ padding: 2px 5px;
+    color: #333;
+    width: 396px;
+    line-height: 36px;
+    font-size: 14px;
+    }
+.pagination__total {
+      display: flex;
+    font-size: 13px;
+    min-width: 35.5px;
+    height: 40px;
+    line-height: 38px;
+    vertical-align: top;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    flex: 1;
+    font-size: 16px!important;
+    color: #dbdfe5!important;
+    margin-right: 10px;
+}
+    .el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev {
+    width: 70px;
+    height: 32px;
+    margin: 0 16px;
+    border-radius: 2px;
+    background-color: #d5ddf8;
 }
 }
-
+.el-table {
+  position: relative;
+    overflow: hidden;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    width: 100%;
+    max-width: 100%;
+    background-color: #fff;
+    font-size: 14px;
+    color: #606266;}
+}
+.el-dialog__header .el-icon-close:before {
+    color: #999;
+}
 </style>

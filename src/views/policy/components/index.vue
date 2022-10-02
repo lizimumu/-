@@ -4,7 +4,7 @@
     <div class="policy-table">
       <el-card class="box-card">
         <div slot="header" class="clearfix">
-          <el-button type="primary" icon="el-icon-circle-plus-outline" class="addPolicy-btn">新建</el-button>
+          <el-button type="primary" icon="el-icon-circle-plus-outline" class="addPolicy-btn" @click="exitPolicy">新建</el-button>
         </div>
         <div class="text item">
           <el-table
@@ -32,39 +32,129 @@
             />
             <el-table-column
               label="操作"
-              width="240"
+              width="180"
             >
-              <el-button size="small" type="text" @click="getDetail">查看详情</el-button>
-              <el-button size="small" type="text">修改</el-button>
-              <el-button size="small" type="text">删除</el-button>
+              <template slot-scope="{row}">
+                <el-button ref="getdetail" size="small" type="text" @click="getDetail(row)">查看详情</el-button>
+                <el-button size="small" type="text" @click="exitPolicy(row)">修改</el-button>
+                <el-button size="small" type="text" class="del-policy" @click="delPolicy(row)">删除</el-button>
+              </template>
             </el-table-column>
           </el-table>
         </div>
       </el-card>
-      <get-detail :dialog-visible="dialogVisible" />
+    </div>
+    <!-- 查看详情区域 -->
+    <div class="policy-container">
+      <el-dialog title="策略详情" :visible.sync="dialogVisible" width="630px">
+        <el-form>
+          <el-form-item label="策略名称：">
+            <span>九折优惠</span>
+          </el-form-item>
+          <el-form-item label="活动区域：" class="activeArea">
+            <span>
+              <el-table :data="gridData" :header-cell-style="{background:'#f3f6fb'}" :row-style="{height:'43px'}">
+                <el-table-column
+                  label="序号"
+                  type="index"
+                  width="50px"
+                />
+                <el-table-column
+                  label="点位名称"
+                  property="nodeName"
+                />
+                <el-table-column property="innerCode" label="设备编号" width="150px" />
+              </el-table>
+            </span>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <div class="pagination">
+            <div class="pagination__total">
+
+              <span>共{{ policyDetailList.totalCount }}条记录</span>
+              <span>第{{ policyDetailList.pageIndex }}/ {{ policyDetailList.totalPage }}页</span>
+              <el-pagination
+                background
+                layout="prev, pager, next"
+                prev-text="上一页"
+                next-text="下一页"
+                :current-page.sync="policyDetailPage.pageIndex"
+                :page-size.sync="policyDetailPage.totalPage"
+                @current-change="toPrevPolicy"
+                @size-change="toPrevPolicy"
+              />
+
+            </div>
+          </div>
+        </div>
+      </el-dialog>
+    </div>
+    <!-- 修改详情区域 -->
+    <div class="editPolicy">
+      <el-dialog :title="title" :visible.sync="dialogFormVisible">
+        <el-form ref="policyDetail" :model="policyDetail">
+          <el-form-item label="策略名称：" :label-width="formLabelWidth">
+            <el-input
+              v-model="policyDetail.policyName"
+              type="text"
+              placeholder="请输入内容"
+              maxlength="15"
+              show-word-limit
+              autocomplete="off"
+            />
+
+          </el-form-item>
+          <el-form-item label="策略方案：" :label-width="formLabelWidth" class="policy-discount">
+            <el-input-number
+              v-model="policyDetail.discount"
+              controls-position="right"
+              :min="1"
+              :max="100"
+              placeholder="请输入"
+              class="policy-discount-ipt"
+            />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button class="button--secondary" @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" class="confim-btn" @click="pullEditPolicy">确 定</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
 import SearchTabbar from '@/components/SearchTab/SearchTabbar.vue'
-import { getPolicyListAPI } from '@/api/policy'
-import GetDetail from './getDetail.vue'
+import { getPolicyListAPI, getPolicyDetailAPI, exitPolicyAPI, delPolicyAPI, addPolicyAPI } from '@/api/policy'
+
 export default {
   components: {
-    SearchTabbar,
-    GetDetail
+    SearchTabbar
   },
   data() {
     return {
-      policyPage: {
+      policyPage: { // 主页面数据带参
         pageIndex: 1,
         pageSize: 10,
         policyName: ''
       },
-      tableData: [],
+      tableData: [], // 页面总数据
       total: 0,
-      dialogVisible: false
+      dialogVisible: false, // 详情弹窗
+      policyDetailPage: { // 详情弹窗的分页组件
+        pageIndex: 1,
+        pageSize: 10
+      },
+      policyDetail: {}, //
+      policyDetailList: {}, // 详情策略信息数据
+      gridData: [],
+      dialogFormVisible: false, // 修改弹窗
+      formLabelWidth: '100px',
+      policyId: null, // 点击详情的id
+      exitPolicyId: null,
+      title: '修改策略'
     }
   },
   created() {
@@ -79,16 +169,192 @@ export default {
     },
     searchByPolicyName(val) {
       this.policyPage.policyName = val
-      // console.log(this.policyPage.policyName)
       this.getPolicyList()
     },
-    getDetail() {
+    async  getDetail(val) {
+      this.policyId = val.policyId
+      const { data } = await getPolicyDetailAPI(this.policyId, this.policyDetailPage)
+      // console.log(data)
+      this.policyDetailList = data
+      this.gridData = data.currentPageRecords
       this.dialogVisible = true
+    },
+    async toPrevPolicy() {
+      console.log(this.policyDetailPage)
+      const { data } = await getPolicyDetailAPI(this.policyId, this.policyDetailPage)
+      // console.log(data)
+      this.policyDetailList = data
+      this.gridData = data.currentPageRecords
+    },
+    exitPolicy(val) {
+      console.log(val)
+      this.title = val.exitPolicyId ? '修改策略' : '新增策略'
+      this.exitPolicyId = val.policyId
+      this.policyDetail = { policyName: val.policyName, discount: val.discount }
+      this.dialogFormVisible = true
+    },
+    // 修改策略详情
+    async pullEditPolicy() {
+      console.log(this.exitPolicyId)
+      console.log(this.policyDetail)
+      this.exitPolicyId ? await exitPolicyAPI(this.exitPolicyId, this.policyDetail) : await addPolicyAPI(this.policyDetail)
+      // console.log(res)
+      this.$message.success(this.exitPolicyId ? '修改成功' : '添加成功')
+      this.getPolicyList()
+      this.dialogFormVisible = false
+    },
+    // 删除策略详情
+    async delPolicy(val) {
+      console.log(val)
+      this.policyPage.policyName = val.policyName
+      console.log(this.policyPage)
+      const res = await delPolicyAPI(val.policyId, this.policyPage)
+      this.policyPage.policyName = ''
+      this.getPolicyList()
+      this.$message.success('删除成功')
+
+      console.log(res)
     }
+
   }
 }
 </script>
+<style  lang="scss">
+.policy-container {
+.el-dialog__header {
+  background-color: #fff !important;
+.el-dialog__title {
+  color: #333;
+  font-size: 16px;
+  font-weight: 700;
+}
+}
+.el-form-item__label {
+font-weight: 400;
+}
+.activeArea {
+  display: flex;
+  th,tr,td {
+  background-color:#fcfdfe;
+  border: 0;
+}
+}
+.el-form-item__content {
+  width: 396px;
+}
+.el-dialog__body {
+padding-left: 50px;
+padding-bottom: 0px;
+}
+.dialog-footer {
+    // background: #fff;
+    padding: 32px 16px;
+    padding-top: 0;
+    padding-left: 110px;
+    white-space: nowrap;
+    .pagination {
+ padding: 2px 5px;
+    color: #333;
+    width: 396px;
+    line-height: 36px;
+    font-size: 14px;
+    }
+.pagination__total {
+      display: flex;
+    font-size: 13px;
+    min-width: 35.5px;
+    height: 40px;
+    line-height: 38px;
+    vertical-align: top;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    flex: 1;
+    font-size: 16px!important;
+    color: #dbdfe5!important;
+    margin-right: 10px;
+}
+    .el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev {
+    width: 70px;
+    height: 32px;
+    margin: 0 16px;
+    border-radius: 2px;
+    background-color: #d5ddf8;
+}
+}
+.el-table {
+  position: relative;
+    overflow: hidden;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    width: 100%;
+    max-width: 100%;
+    background-color: #fff;
+    font-size: 14px;
+    color: #606266;}
+}
+.el-dialog__header .el-icon-close:before {
+    color: #999;
+}
+.policy-container {
+  .editPolicy {
+   .el-input__inner {
+    height: 36px;
+    line-height: 36px;
+    .el-dialog .el-dialog__footer {
+    padding-top: 0;
+    padding-bottom: 40px;
+    .dialog-footer {
+    padding-top: 0;
+    text-align: center;
+    display: flex;
+}
+}
 
+}
+.el-dialog__body {
+  padding-left: 10px;
+}
+
+.dialog-footer {
+  display: flex;
+ margin-left: 70px;
+ .button--secondary {
+  margin-right: 30px;
+  width: 80px;
+  height: 36px;
+  background-color: #fbf4f0;
+ }
+}
+
+ .policy-discount-ipt {
+ width: 100%;
+ }
+.el-input__inner {
+    -webkit-appearance: none;
+    background-color: #fff;
+    background-image: none;
+    border-radius: 4px;
+    border: 1px solid #d8dde3;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #606266;
+    display: inline-block;
+    font-size: inherit;
+    height: 40px;
+    line-height: 40px;
+    outline: none;
+    padding: 0 15px;
+    -webkit-transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+    transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+    width: 100%;
+}
+}
+}
+
+</style>
 <style scoped lang="scss">
 .policy-container {
   padding-left: 20px;
@@ -124,6 +390,9 @@ export default {
     width: 480px;
   }
 
+}
+.del-policy {
+  color: red;
 }
 
 </style>
