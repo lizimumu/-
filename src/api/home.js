@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 import dayjs from 'dayjs'
-import { start } from 'nprogress'
+
 /**
  * 销售折线图
  * @param {开始时间} start

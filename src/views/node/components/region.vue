@@ -5,7 +5,8 @@
     class="table"
     :data="tableData"
     style="width: 100%"
-    :header-cell-style="{background:'#f3f6fb',fontSize:'16px', color:'#666666',borderRadius:'5px' ,fontWeight:'400', height:'42px' ,padding:'10px 0 9px'}"
+    :row-style="{ height:'42px' }"
+    :header-cell-style="{background:'#f3f6fb',fontSize:'16px', color:'#666666',borderRadius:'5px' ,fontWeight:'400', height:'44px !important' ,padding:'10px 0 9px'}"
   >
     <el-table-column
       type="index"
@@ -18,18 +19,18 @@
       width="444"
     />
     <el-table-column
-      prop="address"
+      prop="nodeCount"
       label="点位数"
       width="443"
+      hight="44"
     />
     <el-table-column
-      prop="date"
+      prop="name"
       label="备注说明"
       width="443"
     /> <el-table-column
       prop="date"
       label="操作"
-      width="200"
     > <template>
       <el-button type="text">查看详情</el-button>
       <el-button type="text">修改</el-button>
@@ -41,29 +42,26 @@
 
 <script>
 import search from './cpns/search.vue'
+import { getAreaListAPI } from '@/api/node'
 export default {
   components: {
     search
   },
   data() {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      pageIndex: 1,
+      pageSize: 10,
+      tableData: []
+    }
+  },
+  created() {
+    this.getAreaList()
+  },
+  methods: {
+    async  getAreaList() {
+      const { data } = await getAreaListAPI(this.pageIndex, this.pageSize)
+      console.log(data)
+      this.tableData = data.currentPageRecords
     }
   }
 }
@@ -76,13 +74,16 @@ padding-left: 20px;
 }
 ::v-deep .el-table td{
 border-bottom: none;
+height: 44px !important;
 }
  ::v-deep .el-table tbody tr:hover>td { border-radius: 5px;}
 ::v-deep .el-table th.is-leaf {
     border-bottom: none;
+    height: 44px;
 
 }
 .result{
+
 padding: 20px 15px 19px 17px;
 background-color: #fff;
 .operation{
