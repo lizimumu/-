@@ -181,19 +181,34 @@ export default {
   }
 }
 </script>
-
+<style lang='scss'>
+.el-message-box__status::before {
+    padding-left: 1px;
+    color: red;
+}
+.el-message-box--center {
+  width: 300px;
+    padding-bottom: 30px;
+}
+.el-button--primary {
+    color: #FFF;
+    background-color: #5f84ff;
+    border-color: #409EFF;
+}
+.el-message-box__title {
+    padding-left: 0;
+    margin-bottom: 0;
+    font-size: 14px;
+    line-height: 1;
+    color: #303133;
+}
+</style>
 <style scoped lang='scss'>
 .container{
 padding-left: 20px;
 
 }
-.el-message-box__status::before {
-    padding-left: 1px;
-    color: red;
-}
-::v-deep .el-notification__icon::before{
-  color: red !important;
-}
+
 ::v-deep .el-table::before{
     background-color: transparent;
 }
