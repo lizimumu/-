@@ -1,6 +1,6 @@
 <template>
   <div><div class="search">
-    <label class="el-form-item__label">区域搜索：</label><el-input v-model="input" size="medium" class="input" placeholder="请输入" />
+    <label class="el-form-item__label">{{ title }}:</label><el-input v-model="input" size="medium" class="input" placeholder="请输入" />
     <el-button class="but" type="primary" size="small" @click="search">
       <span class="iconfont icon-sousuo" />
       查询</el-button>
@@ -9,17 +9,34 @@
 
 <script>
 import { getAreaListAPI } from '@/api/node'
+import { CooperativeQuotientSearchAPI } from '@/api/partner'
 export default {
+  props: {
+    title: {
+      type: String,
+      required: true
+
+    },
+    num: {
+      type: Number,
+      required: true
+    }},
   data() {
     return {
       input: ''
     }
   },
   methods: {
-    async   search() {
-      const { data } = await getAreaListAPI(1, 10, this.input)
-      console.log(data)
-      this.$emit('search', data)
+    async  search() {
+      if (this.num === 1) {
+        const { data } = await getAreaListAPI(1, 10, this.input)
+        console.log(data)
+        this.$emit('search', data)
+      }
+      if (this.num === 2) {
+        const { data } = await CooperativeQuotientSearchAPI(1, 10, this.input)
+        this.$emit('search', data)
+      }
     }
   }
 }

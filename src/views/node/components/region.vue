@@ -1,5 +1,5 @@
 <template>
-  <div class="container"><search @search="search" />
+  <div class="container"><search title="区域搜索" :num="1" @search="search" />
     <div class="result">
       <el-row>
         <el-col :span="24"><div class="operation "><el-button class="add" type="warning" size="medium" @click="newBuilt"> <span class="iconfont icon-xinjian" />新建</el-button><div /></div></el-col>
@@ -98,8 +98,22 @@ export default {
       this.$refs.area.ruleForm.remark = row.remark
       this.flag = true
     },
-    del(row) {
-      RemoveArea(row.id)
+    async   del(row) {
+      try {
+        const data = await RemoveArea(row.id)
+        console.log(data)
+        this.$notify({
+          title: '成功',
+          message: '删除成功',
+          type: 'success'
+        })
+      } catch (err) {
+        this.$notify({
+          title: '提示',
+          message: err.response.data,
+          type: 'warning'
+        })
+      }
     },
     close() {
       this.dialogVisible = false

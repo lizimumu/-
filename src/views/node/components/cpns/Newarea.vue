@@ -8,7 +8,7 @@
   >
 
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px" class="demo-ruleForm">
-      <el-form-item label="活动名称" prop="regionName">
+      <el-form-item label="区域名称" prop="regionName">
         <el-input
           v-model="ruleForm.regionName"
           type="text"
@@ -19,7 +19,7 @@
         />
 
       </el-form-item>
-      <el-form-item label="活动区域" prop="remark">
+      <el-form-item label="备注说明" prop="remark">
         <el-input
           v-model="ruleForm.remark"
           type="textarea"
@@ -92,7 +92,7 @@ export default {
     },
     sure() {
       this.$refs.ruleForm.validate().then(() => {
-        this.$loading = true
+        this.loading = true
         this.ruleForm.id ? ModifyArea(this.ruleForm.id, this.ruleForm) : AddAreaAPI(this.ruleForm)
         this.handleClose()
         this.$emit('closes')
