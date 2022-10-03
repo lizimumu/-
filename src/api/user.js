@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import store from '@/store'
+// import store from '@/store'
 export function login(data) {
   return request({
     url: '/vue-admin-template/user/login',
@@ -22,7 +22,7 @@ export function logout() {
     method: 'post'
   })
 }
-console.log(store)
+// console.log(store)
 export function getUserInfoAPI(id) {
   return request({
     url: `/user-service/user/${id}`,

@@ -33,7 +33,7 @@ export default {
     ])
   },
   created() {
-    console.log(this.$store.state.user.data.userId)
+    // console.log(this.$store.state.user.data.userId)
     this.getUserInfo()
   },
   methods: {

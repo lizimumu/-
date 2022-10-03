@@ -1,13 +1,26 @@
 <template>
-  <div>订单策略</div>
+  <div class="order_container">
+
+    <!-- 表格区域 -->
+    <form-table />
+  </div>
 </template>
 
 <script>
+
+import FormTable from './FormTable'
 export default {
-
+  components: {
+    FormTable
+  }
 }
-</script>
+</script >
 
-<style>
+<style scoped lang="scss">
+
+.order_container {
+
+  padding: 0 20px;
+}
 
 </style>
