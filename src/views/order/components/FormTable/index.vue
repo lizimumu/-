@@ -62,8 +62,8 @@
           label="操作"
           width="100"
         >
-          <template slot-scope="{}">
-            <el-button ref="getdetail" size="small" type="text">查看详情</el-button>
+          <template slot-scope="{row}">
+            <el-button ref="getdetail" size="small" type="text" @click="lookDetailOrder(row)">查看详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -81,6 +81,7 @@
     </el-card>
 
     <!-- 详情区域 -->
+    <order-detail v-if="dialogVisible" :dialog-visible.sync="dialogVisible" :detail-msg="detailMsg" />
   </div>
 </template>
 
@@ -89,10 +90,12 @@ import dayjs from 'dayjs'
 import SearchTab from '../SearchTab'
 import { searchOrderAPI } from '@/api/order'
 import ControlPage from '../ControlPage'
+import OrderDetail from '../OrderDetail'
 export default {
   components: {
     SearchTab,
-    ControlPage
+    ControlPage,
+    OrderDetail
   },
   filters: {
     filterPrice(val) {
@@ -113,15 +116,10 @@ export default {
       return val.replace('T', ' ').replace(/-/ig, '.')
     }
   },
-  props: {
-    formData: {
-      type: Object,
-      default: () => ({})
-    }
-  },
   data() {
     return {
       tableData: [],
+      dialogVisible: false,
       order: {
         pageIndex: 1,
         pageSize: 10,
@@ -131,7 +129,8 @@ export default {
       },
       totalCount: 0,
       totalPage: 1,
-      flag: false
+      flag: false,
+      detailMsg: {}
     }
   },
   watch: {
@@ -170,6 +169,10 @@ export default {
       }
       // console.log(this.order)
       this.searchOrder()
+    },
+    lookDetailOrder(val) {
+      this.detailMsg = val
+      this.dialogVisible = true
     }
 
   }
