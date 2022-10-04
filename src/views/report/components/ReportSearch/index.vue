@@ -8,7 +8,7 @@
               <template #label>
                 <span class="search-text"> {{ title1 }}</span>
               </template>
-              <el-select v-model="formData.partnerName" clearable placeholder="请选择活动区域">
+              <el-select v-model="formData.partnerName" clearable placeholder="请选择">
                 <el-option
                   v-for="partner in partnerMsgList"
                   :key="partner.account"
