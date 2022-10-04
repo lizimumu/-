@@ -78,7 +78,7 @@ margin-right: 20px;
   border-radius: 20px;
   padding: 20px;
 background-color: #e9f3ff;
-    background-image: url('../../../assets/common/circle.png'),url('../../../assets/common/task.png');
+    background-image: url('~@/assets/common/circle.png'),url('~@/assets/common/task.png');
     background-repeat: no-repeat,no-repeat;
     background-position: 0 0,calc(100% - 12px) 100%;
   .header{
