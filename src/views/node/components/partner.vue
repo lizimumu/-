@@ -8,7 +8,7 @@
         :data="tableData"
         style="width: 100%"
         :row-style="{ height:'44px' }"
-        :header-cell-style="{background:'#f3f6fb',fontSize:'16px', color:'#666666',borderRadius:'5px' ,fontWeight:'400', height:'44px !important' ,}"
+        :header-cell-style="{background:'#f3f6fb',fontSize:'14px', color:'#666666',fontWeight:'400', height:'44px !important' ,}"
       >
         <el-table-column
           type="index"
@@ -89,7 +89,6 @@ export default {
   components: {
     search,
     ModifyPartner
-
   },
   data() {
     return {
@@ -99,7 +98,6 @@ export default {
       pageIndex: 1,
       pageSize: 10,
       tableData: []
-
     }
   },
   created() {
@@ -258,6 +256,7 @@ border-radius: 4px;
 width: 80px; font-size: 14px;
  color: #fff;
 vertical-align: middle;
+    // padding-left: 30px;
 height: 36px;
 span{
 margin-right: 8px;

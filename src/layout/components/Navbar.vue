@@ -43,7 +43,7 @@ export default {
     },
     async getUserInfo() {
       const { data } = await getUserInfoAPI(this.$store.state.user.data.userId)
-      // console.log(data)
+      console.log(data)
       this.$store.commit('user/SET_USER_INFO', data)
     }
   }

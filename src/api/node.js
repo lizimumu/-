@@ -64,4 +64,87 @@ export function RemoveArea(id) {
 
   })
 }
+/**
+ *获取点位列表
+ * @param {*} pageIndex
+ * @param {*} pageSize
+ * @param {*} name
+ * @param {*} regionld
+ * @returns
+ */
+export function PointSearchElementAPI(pageIndex, pageSize
+  , name, regionld) {
+  return request({
+    url: `/vm-service/node/search`,
+    method: 'GET',
+    params: {
+      pageIndex, pageSize, name, regionld
+    }
+  })
+}
+/**
+ *点位删除
+ * @param {*} id
+ * @param {*} pageIndex
+ * @param {*} pageSize
+ * @param {*} name
+ * @param {*} regionld
+ * @returns
+ */
+export function DeletePointAPI(id, pageIndex, pageSize
+  , name, regionld) {
+  return request({
+    url: `/vm-service/node/ ${id}`,
+    method: 'DELETE',
+    params: {
+      pageIndex, pageSize, name, regionld
+    }
+  })
+}
+/**
+ *获取点位详情
+ * @param {*} id
+ * @returns
+ */
+export function PointDetailsAPI(id) {
+  return request({
+    url: `/vm-service/node/vmList/${id}`,
+    method: 'GET'
+  })
+}
+/**
+ *获取商圈列表
+ * @param {*} id
+ * @returns
+ */
+export function BusinessDistrictListAPI() {
+  return request({
+    url: `/vm-service/businessType`,
+    method: 'GET'
+  })
+}
+/**
+ *新增点位
+ * @param {} data
+ * @returns
+ */
+export function AddPointAPI(data) {
+  return request({
+    url: `/vm-service/node`,
+    method: 'POST',
+    data
+  })
+}
+/**
+ *修改点位
+ * @param {} id
+ * @returns
+ */
+export function ModifyPointLocationAPI(id, data) {
+  return request({
+    url: `/vm-service/node/${id}`,
+    method: 'PUT',
+    data
+  })
+}
 
