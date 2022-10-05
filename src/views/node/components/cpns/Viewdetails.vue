@@ -1,16 +1,35 @@
 <template>
-  <div><el-dialog
-    title="区域详情"
-    class="body"
-    :visible.sync="dialogVisible"
-    width="630px"
-    :before-close="handleClose"
-  >
-    <form class="el-form"><div class="el-form-item"><label class="el-form-item__label" style="width: 140px;">区域名称：</label><div class="el-form-item__content" style="margin-left: 140px;">
-      城北街道
-    </div></div><div class="el-form-item"><label class="el-form-item__label" style="width: 140px;">包含点位：</label><div class="el-form-item__content" style="margin-left: 140px;"><div class="el-table el-table--fit el-table--enable-row-hover el-table--enable-row-transition" style="width: 100%;"><div class="hidden-columns"><div /><div /><div /></div><div class="el-table__header-wrapper"><table cellspacing="0" cellpadding="0" border="0" class="el-table__header" style="width: 396px;"><colgroup><col name="el-table_2_column_6" width="80"><col name="el-table_2_column_7" width="158"><col name="el-table_2_column_8" width="158"><col name="gutter" width="0"></colgroup><thead class="has-gutter"><tr class=""><th colspan="1" rowspan="1" class="el-table_2_column_6     is-leaf" style="line-height: 1.15; padding: 10px 0px 9px; background: rgb(243, 246, 251); font-weight: 500; text-align: left; color: rgb(102, 102, 102);"><div class="cell">序号</div></th><th colspan="1" rowspan="1" class="el-table_2_column_7     is-leaf" style="line-height: 1.15; padding: 10px 0px 9px; background: rgb(243, 246, 251); font-weight: 500; text-align: left; color: rgb(102, 102, 102);"><div class="cell">点位名称</div></th><th colspan="1" rowspan="1" class="el-table_2_column_8     is-leaf" style="line-height: 1.15; padding: 10px 0px 9px; background: rgb(243, 246, 251); font-weight: 500; text-align: left; color: rgb(102, 102, 102);"><div class="cell">设备数量</div></th><th class="gutter" style="width: 0px; display: none;" /></tr></thead></table></div><div class="el-table__body-wrapper is-scrolling-none"><table cellspacing="0" cellpadding="0" border="0" class="el-table__body" style="width: 396px;"><colgroup><col name="el-table_2_column_6" width="80"><col name="el-table_2_column_7" width="158"><col name="el-table_2_column_8" width="158"></colgroup><tbody><tr class="el-table__row"><td rowspan="1" colspan="1" class="el-table_2_column_6  " style="height: 44px; padding: 2px 0px; background: rgb(252, 253, 254); text-align: left; color: rgb(102, 102, 102);"><div class="cell"><span>1</span></div></td><td rowspan="1" colspan="1" class="el-table_2_column_7  " style="height: 44px; padding: 2px 0px; background: rgb(252, 253, 254); text-align: left; color: rgb(102, 102, 102);"><div class="cell"><span>八达岭奥特莱斯</span></div></td><td rowspan="1" colspan="1" class="el-table_2_column_8  " style="height: 44px; padding: 2px 0px; background: rgb(252, 253, 254); text-align: left; color: rgb(102, 102, 102);"><div class="cell"><span>2</span></div></td></tr><!----></tbody></table><!----><!----></div><!----><!----><!----><!----><div class="el-table__column-resize-proxy" style="display: none;" /><div class="el-loading-mask" style="display: none;"><div class="el-loading-spinner"><svg viewBox="25 25 50 50" class="circular"><circle cx="50" cy="50" r="20" fill="none" class="path" /></svg><!----></div></div></div><div data-v-3417ed67="" class="pagination-container hidden"><!----></div><!----></div></div></form>
+  <div>
+    <el-dialog
+      title="区域详情"
+      :visible.sync="dialogVisible"
+      width="630px"
+      :before-close="handleClose"
+    >
+      <div class="top">区域名称 :<span>{{ title }}</span></div>
+      <div class="body"> <div class="left">包含点位:</div> <el-table
+        :data="tableData"
+        style="width: 100%"
+        :row-style="{ height:'44px' }"
+        :header-cell-style="{background:'#f3f6fb',fontSize:'14px', color:'#666666',fontWeight:'400', height:'42px' ,}"
+      >
+        <el-table-column
+          type="index"
 
-  </el-dialog></div>
+          label="序号"
+          width="80px"
+        />
+        <el-table-column
+          prop="name"
+          label="点位名称"
+        />
+        <el-table-column
+          prop="vmCount"
+          label="设备数量"
+        />
+      </el-table></div>
+
+    </el-dialog></div>
 </template>
 
 <script>
@@ -23,7 +42,8 @@ export default {
   },
   data() {
     return {
-
+      title: '',
+      tableData: []
     }
   },
   methods: {
@@ -53,20 +73,45 @@ export default {
 ::v-deep .el-dialog{
   border-radius: 10px;
 }
-.el-dialog .el-dialog__body .el-form-item {
-    margin-bottom: 20px;
+.body{
+  display: flex;
+
 }
-.el-form-item__label {
-    text-align: right;
-    vertical-align: middle;
-    float: left;
-    height: 36px;
-    font-size: 14px;
+::v-deep .el-dialog__body {
+    padding: 25px 20px;
+    padding-left: 80px !important;
+    padding-right: 75px;
     color: #606266;
-    line-height: 40px;
-    font-weight: normal;
-    padding: 0 12px 0 0;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
+    font-size: 14px;
+    word-break: break-all;
+}
+::v-deep  .el-table::before{
+    background-color: transparent ;
+}
+::v-deep  .el-table__header-wrapper {
+    overflow: hidden;
+  background-color: #fff;
+}
+
+ ::v-deep  .el-table td{
+border-bottom: none;
+height: 44px !important;
+padding: 0px !important;
+}
+ ::v-deep .el-table tbody tr:hover>td { border-radius: 5px;}
+ ::v-deep .el-table th.is-leaf {
+    border-bottom: none;
+    height: 44px;
+
+}
+.left{
+padding-top: 18px;
+margin-right: 20px;
+}
+.top{
+    margin-bottom: 30px;
+  span{
+    margin-left: 20px;
+  }
 }
 </style>

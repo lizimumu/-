@@ -38,7 +38,7 @@
           <el-button type="text" class="delete" @click="del(row)">删除</el-button>
         </template></el-table-column>
       </el-table>
-      <Paginate v-if="!tableData.length==0" :data="data" @update-data="UpdateData" />  <ViewDetails :dialog-visible="dialogVisible" @close="close" />
+      <Paginate v-if="!tableData.length==0" :data="data" @update-data="UpdateData" />  <ViewDetails ref="view" :dialog-visible="dialogVisible" @close="close" />
       <NewArea ref="area" :dialog-visible="flag" @closes="closes" /></div></div>
 
 </template>
@@ -87,8 +87,11 @@ export default {
     },
     async  examine(row, index) {
       this.dialogVisible = true
-      const data = await GetDetailsAPI(this.pageIndex, this.pageSize, row.id)
+      const { data } = await GetDetailsAPI(this.pageIndex, this.pageSize, row.id)
       console.log(data)
+      console.log(row)
+      this.$refs.view.title = row.name
+      this.$refs.view.tableData = data.currentPageRecords
     },
     modify(row, index) {
       console.log(row)
