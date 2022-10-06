@@ -1,5 +1,5 @@
 <template>
-  <div class="policy-container">
+  <div v-loading="loading" class="policy-container">
     <search-tabbar :policy-name="policyPage.policyName" @searchByPolicyName="searchByPolicyName" />
     <div class="policy-table">
       <el-card class="box-card">
@@ -41,6 +41,23 @@
               </template>
             </el-table-column>
           </el-table>
+        </div>
+        <div v-if="total>10" class="policy-page">
+          <div class="policy-page_total">
+            <div> <span>共{{ total }}条记录</span>
+              <span>第{{ policyPage.pageIndex }}/ {{ policyPage.totalPage }}页</span></div>
+            <el-pagination
+              background
+              layout="prev, pager, next"
+              prev-text="上一页"
+              next-text="下一页"
+              :current-page.sync="policyPage.pageIndex"
+              :page-size.sync="policyPage.totalPage"
+              @current-change="getPolicyList"
+              @size-change="getPolicyList"
+            />
+
+          </div>
         </div>
       </el-card>
     </div>
@@ -92,9 +109,9 @@
     </div>
     <!-- 修改详情区域 -->
     <div class="editPolicy">
-      <el-dialog :title="title" :visible.sync="dialogFormVisible">
-        <el-form ref="policyDetail" :model="policyDetail">
-          <el-form-item label="策略名称：" :label-width="formLabelWidth">
+      <el-dialog :title="title" :visible.sync="dialogFormVisible" :before-close="handleClose">
+        <el-form ref="policyDetail" :model="policyDetail" :rules="rules">
+          <el-form-item label="策略名称：" :label-width="formLabelWidth" prop="policyName">
             <el-input
               v-model="policyDetail.policyName"
               type="text"
@@ -102,43 +119,49 @@
               maxlength="15"
               show-word-limit
               autocomplete="off"
+              :validate-event="false"
             />
 
           </el-form-item>
-          <el-form-item label="策略方案：" :label-width="formLabelWidth" class="policy-discount">
+          <el-form-item label="策略方案：" :label-width="formLabelWidth" class="policy-discount" prop="discount">
             <el-input-number
-              v-model="policyDetail.discount"
+              v-model.number="policyDetail.discount"
               controls-position="right"
               :min="1"
               :max="100"
               placeholder="请输入"
               class="policy-discount-ipt"
+              :validate-event="false"
             />
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button class="button--secondary" @click="dialogFormVisible = false">取 消</el-button>
+          <el-button class="button--secondary" @click="handleClose">取 消</el-button>
           <el-button type="primary" class="confim-btn" @click="pullEditPolicy">确 定</el-button>
         </div>
       </el-dialog>
     </div>
+    <!-- 分页组件 -->
+
   </div>
 </template>
 
 <script>
 import SearchTabbar from '@/components/SearchTab/SearchTabbar.vue'
 import { getPolicyListAPI, getPolicyDetailAPI, exitPolicyAPI, delPolicyAPI, addPolicyAPI } from '@/api/policy'
-
 export default {
   components: {
     SearchTabbar
+
   },
+
   data() {
     return {
       policyPage: { // 主页面数据带参
         pageIndex: 1,
         pageSize: 10,
-        policyName: ''
+        policyName: '',
+        totalPage: 0
       },
       tableData: [], // 页面总数据
       total: 0,
@@ -147,7 +170,10 @@ export default {
         pageIndex: 1,
         pageSize: 10
       },
-      policyDetail: {}, //
+      policyDetail: {
+        discount: 0,
+        policyName: ''
+      }, //
       policyDetailList: {}, // 详情策略信息数据
       gridData: [],
       dialogFormVisible: false, // 修改弹窗
@@ -155,7 +181,18 @@ export default {
       policyId: null, // 点击详情的id
       exitPolicyId: null,
       title: '修改策略',
-      policyName: ''
+      policyName: '',
+      rules: {
+        discount: [
+          { required: true, message: '请输入' }
+        ],
+        policyName: [
+          { required: true, message: '请输入' }
+        ]
+      },
+      policyTotal: 0,
+      loading: false
+
     }
   },
   created() {
@@ -163,10 +200,31 @@ export default {
   },
   methods: {
     async getPolicyList() {
-      const { data } = await getPolicyListAPI(this.policyPage)
-      // console.log(data)
-      this.tableData = data.currentPageRecords
-      this.total = data.totalCount
+      try {
+        this.loading = true
+        const { data } = await getPolicyListAPI(this.policyPage)
+        // console.log(data)
+        this.tableData = data.currentPageRecords
+        this.total = data.totalCount
+        this.policyPage.pageIndex = +data.pageIndex
+        this.policyPage.totalPage = +data.totalPage
+        if (data.totalCount > 0 && data.currentPageRecords.length === 0) {
+          this.policyPage.pageIndex = this.policyPage.pageIndex - 1
+          this.getPolicyList()
+        }
+      } catch (e) {
+        throw new Error()
+      } finally {
+        this.loading = false
+      }
+    },
+    handleClose() {
+      this.$refs.policyDetail.resetFields()
+      this.dialogFormVisible = false
+      this.policyDetail = {
+        discount: 0,
+        policyName: ''
+      }
     },
     searchByPolicyName(val) {
       this.policyPage.policyName = val
@@ -175,21 +233,32 @@ export default {
     async  getDetail(val) {
       this.policyId = val.policyId
       this.policyName = val.policyName
-      const { data } = await getPolicyDetailAPI(this.policyId, this.policyDetailPage)
-      // console.log(data)
-      this.policyDetailList = data
-      this.gridData = data.currentPageRecords
-      this.dialogVisible = true
+      try {
+        const { data } = await getPolicyDetailAPI(this.policyId, this.policyDetailPage)
+        // console.log(data)
+        this.policyDetailList = data
+        this.gridData = data.currentPageRecords
+        this.policyDetailPage.pageIndex = +data.pageIndex
+        this.policyDetailPage.totalPage = +data.totalPage
+        this.dialogVisible = true
+      } catch (e) {
+        this.$message.fail(e.message)
+      } finally {
+        this.dialogVisible = false
+      }
     },
     async toPrevPolicy() {
-      console.log(this.policyDetailPage)
+      // console.log(this.policyDetailPage)
       const { data } = await getPolicyDetailAPI(this.policyId, this.policyDetailPage)
       // console.log(data)
       this.policyDetailList = data
+      this.policyDetailPage.pageIndex = +data.pageIndex
+      this.policyDetailPage.totalPage = +data.totalPage
       this.gridData = data.currentPageRecords
     },
-    exitPolicy(val) {
-      console.log(val)
+    async exitPolicy(val) {
+      // console.log(val)
+      // await this.$refs.policyDetail.validate()
       this.title = val.exitPolicyId ? '修改策略' : '新增策略'
       this.exitPolicyId = val.policyId
       this.policyDetail = { policyName: val.policyName, discount: val.discount }
@@ -197,25 +266,36 @@ export default {
     },
     // 修改策略详情
     async pullEditPolicy() {
-      console.log(this.exitPolicyId)
-      console.log(this.policyDetail)
-      this.exitPolicyId ? await exitPolicyAPI(this.exitPolicyId, this.policyDetail) : await addPolicyAPI(this.policyDetail)
-      // console.log(res)
-      this.$message.success(this.exitPolicyId ? '修改成功' : '添加成功')
-      this.getPolicyList()
-      this.dialogFormVisible = false
+      // console.log(this.exitPolicyId)
+      // console.log(this.policyDetail)
+      await this.$refs.policyDetail.validate()
+      try {
+        this.exitPolicyId ? await exitPolicyAPI(this.exitPolicyId, this.policyDetail) : await addPolicyAPI(this.policyDetail)
+        // console.log(res)
+        this.$message.success(this.exitPolicyId ? '修改成功' : '添加成功')
+        this.getPolicyList()
+        this.dialogFormVisible = false
+      } catch (e) {
+        throw new Error()
+      }
     },
     // 删除策略详情
     async delPolicy(val) {
-      console.log(val)
       this.policyPage.policyName = val.policyName
-      console.log(this.policyPage)
-      const res = await delPolicyAPI(val.policyId, this.policyPage)
-      this.policyPage.policyName = ''
-      this.getPolicyList()
-      this.$message.success('删除成功')
-
-      console.log(res)
+      // console.log(this.policyPage)
+      try {
+        await this.$confirm('确定删除该条数据吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        await delPolicyAPI(val.policyId, this.policyPage)
+        this.policyPage.policyName = ''
+        this.$message.success('删除成功')
+        this.getPolicyList()
+      } catch (e) {
+        throw new Error()
+      }
     }
 
   }
@@ -223,6 +303,9 @@ export default {
 </script>
 <style  lang="scss">
 .policy-container {
+  .el-dialog {
+    width: 630px;
+  }
 .el-dialog__header {
   background-color: #fff !important;
 .el-dialog__title {
@@ -245,6 +328,7 @@ font-weight: 400;
   width: 396px;
 }
 .el-dialog__body {
+
 padding-left: 50px;
 padding-bottom: 0px;
 }
@@ -355,7 +439,23 @@ padding-bottom: 0px;
 }
 }
 }
+.policy-page {
+  height: 95px;
+  padding: 35px 16px;
+  color: #ccc;
+  .policy-page_total {
+   display: flex;
+  justify-content: space-between;
+      .el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev {
+    width: 70px;
+    height: 32px;
+    margin: 0 16px;
+    border-radius: 2px;
+    background-color: #d5ddf8;
+}
+  }
 
+}
 </style>
 <style scoped lang="scss">
 .policy-container {
@@ -396,5 +496,22 @@ padding-bottom: 0px;
 .del-policy {
   color: red;
 }
+::v-deep .el-table::before{
+ background-color: transparent;
+}
+::v-deep .el-table td{
+border-bottom: none;
+height: 44px !important;
+padding: 0px !important;
+}
+::v-deep .el-table tbody tr:hover>td { border-radius: 5px;}
+::v-deep .el-table th.is-leaf {
+border-bottom: none;
+ height: 44px;
 
+}
+.confim-btn {
+ background-color: #ff8739;
+ border: 0;
+}
 </style>
