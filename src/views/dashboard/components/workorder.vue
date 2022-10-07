@@ -51,8 +51,8 @@ export default {
   methods: {
     async getWorkOder() {
       try {
-        // const { data } = await getWorkOderAPI(this.month.start_time, this.month.end_time)
-        const { data } = await getWorkOderAPI('2022-09-01', '2022-09-30')
+        const { data } = await getWorkOderAPI(this.month.start_time, this.month.end_time)
+        // const { data } = await getWorkOderAPI('2022-09-01', '2022-09-30')
         this.total = data.reduce((acc, item) => {
           acc += item.total
           return acc

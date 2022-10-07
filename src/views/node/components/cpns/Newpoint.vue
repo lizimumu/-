@@ -147,15 +147,18 @@ export default {
       this.form.addr = this.$refs.ipt.getCheckedNodes()[0].pathLabels.join('-')
     },
     ModifyData(row) {
+      console.log(row)
       this.id = row.id
-      this.$set(this.data, 'textarea', row.adder)
+
       this.data.name = row.name
       this.data.region = row.region.name
       this.data.Business = row.businessType.name
       this.data.Partners = row.ownerName
-
+      this.data.textarea = row.addr
       this.$nextTick(() => {
         this.$refs.ipt.inputValue = row.value
+
+        this.data.value = row.areaCode
       })
 
       // this.$refs.ipt. = row.value
@@ -198,6 +201,7 @@ export default {
         })
 
         this.id ? ModifyPointLocationAPI(this.id, this.form) : await AddPointAPI(this.form)
+        this.id ? this.$message.success('修改成功') : await this.$message.success('新增成功')
 
         this.handleClose()
       }).catch(() => {

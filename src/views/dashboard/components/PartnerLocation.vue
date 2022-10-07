@@ -74,9 +74,15 @@ export default {
 
                   color: '#333333',
                   show: true,
-                  formatter: function(value) {
-                    return `${value.name}
-${value.percent}%`
+                  //                   formatter: function(value) {
+                  //                     return `${value.name}
+                  // ${value.percent}%`
+                  //                   },bb
+                  formatter: `{b|{b}}\n{d}%`,
+                  rich: {
+                    b: {
+                      fontWeight: 700
+                    }
                   }
                 }
 

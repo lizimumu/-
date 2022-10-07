@@ -87,7 +87,7 @@ export default {
     },
     async  examine(row, index) {
       this.dialogVisible = true
-      const { data } = await GetDetailsAPI(this.pageIndex, this.pageSize, row.id)
+      const { data } = await GetDetailsAPI(this.pageIndex, this.pageSize, null, row.id)
       console.log(data)
       console.log(row)
       this.$refs.view.title = row.name

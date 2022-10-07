@@ -26,6 +26,9 @@ import variables from '@/styles/variables.scss'
 
 export default {
   components: { SidebarItem, Logo },
+  created() {
+    console.log(this.routes)
+  },
   computed: {
     ...mapGetters([
       'sidebar'

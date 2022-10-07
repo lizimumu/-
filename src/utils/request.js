@@ -9,8 +9,8 @@ const IsCheckTimeOut = () => {
   const timeStamp = (currentTime - store.getters.hrsaaTime) / 1000 /* s */
   return timeStamp > Timeout /* true说明超时 */
 }
-// 通过axios 创建实例 了另一个axios 出来
-// console.log(process.env.VUE_APP_BASE_API)
+// !通过axios 创建实例 了另一个axios 出来
+// !console.log(process.env.VUE_APP_BASE_API)
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, /* 基础地址 */
   timeout: 5000

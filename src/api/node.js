@@ -17,17 +17,15 @@ export function getAreaListAPI(num1, num2, name) {
   })
 }
 
-export function GetDetailsAPI(index, size, id) {
+export function GetDetailsAPI(index, size, name, id) {
   return request({
-    url: `/vm-service/node/search`,
+    url: '/vm-service/node/search',
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     params: {
       pageIndex: index,
       pageSize: size,
-      regionld: id
+      name,
+      regionId: id
     }
   })
 }
