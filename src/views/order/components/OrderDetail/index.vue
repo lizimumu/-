@@ -10,13 +10,16 @@
         <el-row class="detail-dialog-title">
           <el-col :span="16">
             <div class="detail-left">
-              <i class="el-icon-success successMsg" />
+              <i v-if="detailMsg.status==0" class="el-icon-s-finance failMsg" />
+              <i v-else class="el-icon-success successMsg" />
+
               <span class="detail-status">{{ detailMsg.status|filterPayStatus }}</span>
             </div>
           </el-col>
           <el-col :span="8">
             <div class="detail-status-img">
-              <img src="@/assets/common/successYaMi.png" alt="">
+              <img v-if="detailMsg.status==0" src="@/assets/common/wzfa.jpg" alt="">
+              <img v-else src="@/assets/common/successYaMi.png" alt="">
 
             </div></el-col>
         </el-row>
@@ -75,7 +78,7 @@ export default {
     },
     filterPayStatus(val) {
       if (val === 0) {
-        return '订单已创建'
+        return '未支付'
       } else if (val === 1) {
         return '支付完成'
       } else if (val === 2) {
@@ -106,6 +109,10 @@ export default {
     detailMsg: {
       type: Object,
       default: () => ({})
+    }
+  },
+  data() {
+    return {
     }
   },
   methods: {
@@ -150,6 +157,13 @@ export default {
     height: 26px;
     font-size: 26px;
     color: #79e192;
+  }
+  .failMsg {
+        margin-left: 10px;
+    margin-right: 20px;
+    width: 26px;
+    height: 26px;
+    font-size: 26px;
   }
   }
   .detail-status-img {

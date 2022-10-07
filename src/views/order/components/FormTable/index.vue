@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <!-- 搜索框区域 -->
     <search-tab @searchOrderDetail="searchOrderDetail" />
     <!-- 表格区域 -->
@@ -103,7 +103,7 @@ export default {
     },
     filterPayStatus(val) {
       if (val === 0) {
-        return '订单已创建'
+        return '未支付'
       } else if (val === 1) {
         return '支付完成'
       } else if (val === 2) {
@@ -130,7 +130,8 @@ export default {
       totalCount: 0,
       totalPage: 1,
       flag: false,
-      detailMsg: {}
+      detailMsg: {},
+      loading: false
     }
   },
   watch: {
@@ -148,20 +149,27 @@ export default {
   },
   methods: {
     async  searchOrder() {
-      const { data } = await searchOrderAPI(this.order)
-      // console.log(data)
-      this.tableData = data.currentPageRecords
-      this.order.pageIndex = data.pageIndex
-      this.pageSize = data.pageSize
-      this.totalCount = data.totalCount
-      this.totalPage = data.totalPage
+      this.loading = true
+      try {
+        const { data } = await searchOrderAPI(this.order)
+        // console.log(data)
+        this.tableData = data.currentPageRecords
+        this.order.pageIndex = data.pageIndex
+        this.pageSize = data.pageSize
+        this.totalCount = data.totalCount
+        this.totalPage = data.totalPage
+      } catch (e) {
+        throw new Error()
+      } finally {
+        this.loading = false
+      }
     },
     toPrevPolicy(pageIndex) {
       this.order.pageIndex = pageIndex
       this.searchOrder()
     },
     searchOrderDetail(val) {
-      console.log(val)
+      // console.log(val)
       this.$set(this.order, 'orderNo', val.orderNo)
       if (val.value !== '') {
         this.$set(this.order, 'startDate', dayjs(val.value[0]).format('YYYY-MM-DD'))
