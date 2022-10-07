@@ -61,6 +61,12 @@ export default {
     }
   },
   data() {
+    const phoneValid = (rule, value, callback) => {
+      console.log(value)
+      if (value === '') {
+        callback()
+      }
+    }
     return {
 
       data: {
@@ -71,7 +77,8 @@ export default {
       },
       rules: {
         name: [{ required: true, message: '请输入', trigger: 'change' }],
-        ratio: [{ required: true, message: '请输入', trigger: 'change' }],
+        ratio: [{ required: true, message: '请输入', trigger: 'blur' }, { validator: phoneValid }
+        ],
         contact: [{ required: true, message: '请输入', trigger: 'change' }],
         mobile: [{ required: true, message: '请输入', trigger: 'change' }, { pattern: /^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[189]))\d{8}$/, message: '', trigger: 'change' }]
       }

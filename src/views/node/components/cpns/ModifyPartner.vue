@@ -40,7 +40,7 @@
 
       </el-form-item>
       <el-form-item label="分成比例(%)" prop="ratio">
-        <el-input-number v-model.trim="data.ratio" controls-position="right" class="number" :min="1" :max="100" />
+        <el-input-number v-model.trim="data.ratio" controls-position="right" class="number" :max="100" />
 
       </el-form-item>
       <el-form-item v-if="!data.id" label="账号" prop="account">
