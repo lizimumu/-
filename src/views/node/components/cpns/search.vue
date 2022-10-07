@@ -1,12 +1,12 @@
 <template>
   <div><div class="search">
     <label class="el-form-item__label">{{ title }}:</label><el-input v-model="input" size="medium" class="input" placeholder="请输入" />
-    <div v-if="num==3">   <label class="el-form-item__label label">{{ title }}:</label><el-select v-model="value" filterable placeholder="请选择" class="select">
+    <div v-if="flag">   <label class="el-form-item__label label">{{ title1 }}:</label><el-select v-model="value" filterable placeholder="请选择" class="select">
       <el-option
         v-for="item in options"
         :key="item.id"
 
-        :value="item.name"
+        :value="num == 4 ? item.statusName : item.name"
       />
     </el-select></div>
     <el-button class="but" type="primary" size="small" @click="search">
@@ -18,6 +18,7 @@
 <script>
 import { getAreaListAPI, PointSearchElementAPI } from '@/api/node'
 import { CooperativeQuotientSearchAPI } from '@/api/partner'
+import { getJobSearchAPI } from '@/api/task'
 export default {
   name: 'Search',
   props: {
@@ -41,13 +42,17 @@ export default {
     }},
   data() {
     return {
+      flag: false,
       input: '',
       value: '',
-      regionld: '',
+      regionId: '',
       pageIndex: 1,
       pageSize: 10
-
     }
+  },
+  created() {
+    if (this.num === 3) this.flag = true
+    if (this.num === 4) this.flag = true
   },
   methods: {
     async  search() {
@@ -55,10 +60,10 @@ export default {
         this.options.forEach((item) => {
           console.log(item)
           if (item.name === this.value) {
-            this.regionld = item.id
+            this.regionId = item.id
           }
         })
-        const { data } = await PointSearchElementAPI(this.pageIndex, this.pageSize, this.input, this.regionld)
+        const { data } = await PointSearchElementAPI(this.pageIndex, this.pageSize, this.input, this.regionId)
         this.$emit('search', data)
       }
       if (this.num === 1) {
@@ -68,6 +73,23 @@ export default {
       }
       if (this.num === 2) {
         const { data } = await CooperativeQuotientSearchAPI(this.pageIndex, this.pageSize, this.input)
+        this.$emit('search', data)
+      }
+      if (this.num === 4) {
+        let id = ''
+        this.options.forEach(item => {
+          if (item.statusName === this.value) {
+            id = item.id
+          }
+        })
+        const { data } = await getJobSearchAPI({
+          pageIndex: 1,
+          pageSize: 10,
+          taskCode: this.input,
+          status: id,
+          isRepair: true
+        })
+        console.log(data)
         this.$emit('search', data)
       }
     }
