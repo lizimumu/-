@@ -109,7 +109,7 @@ height: 20px;
     height: 113px;
 
     .stats{
-    padding: 0 52px;
+    padding: 0 20px;
       height: 113px;
 display: flex;
 align-items: center;

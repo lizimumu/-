@@ -8,7 +8,7 @@
               <template #label>
                 <span class="search-text"> {{ title1 }}</span>
               </template>
-              <el-select v-model="formData.partnerName" clearable placeholder="请选择">
+              <el-select v-model="formData.partnerName" clearable placeholder="请选择" @focus="getPartner">
                 <el-option
                   v-for="partner in partnerMsgList"
                   :key="partner.account"
@@ -90,6 +90,9 @@ export default {
     },
     clearOrderNo() {
       // this.formData.orderNo = ''
+    },
+    getPartner() {
+      this.$emit('getPartner')
     }
 
   }

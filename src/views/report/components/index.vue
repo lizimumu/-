@@ -1,5 +1,5 @@
 <template>
-  <div class="report-container">
+  <div v-loading="loading" class="report-container">
     <!-- 上部分区域 -->
     <el-row type="flex" class="row-bg" justify="space-between">
       <!-- 日销售额区域 -->
@@ -19,6 +19,7 @@
         :title2="title2"
         :partner-msg-list="partnerMsgList"
         @searchPartnerReport="searchPartnerReport"
+        @getPartner="getPartnerList"
       />
       <el-row class="report-stats">
         <el-col :span="5">
@@ -99,7 +100,8 @@ export default {
       orderCount: 0,
       totalPage: 0,
       totalCount: 0,
-      isShowPage: false
+      isShowPage: false,
+      loading: false
     }
   },
   watch: {
@@ -114,7 +116,7 @@ export default {
   },
   created() {
     this.partnerCollect()
-    this.getPartnerList()
+    // this.getPartnerList()
     this.getTotalBill()
     this.getOrderAmount()
     this.getOrderCount()
@@ -122,54 +124,81 @@ export default {
   methods: {
     // 根据供应商名字获取分成数据
     async partnerCollect() {
-      const { data } = await partnerCollectAPI(this.report)
-      // console.log(data)
-      this.partnerList = data.currentPageRecords
-      this.report.pageIndex = data.pageIndex
-      this.totalCount = data.totalCount
-      this.totalPage = data.totalPage
+      this.loading = true
+      try {
+        const { data } = await partnerCollectAPI(this.report)
+        // console.log(data)
+        this.partnerList = data.currentPageRecords
+        this.report.pageIndex = data.pageIndex
+        this.totalCount = data.totalCount
+        this.totalPage = data.totalPage
+      } catch {
+        throw new Error()
+      } finally {
+        this.loading = false
+      }
     },
     // 获取所有的合作商
     async getPartnerList() {
-      const { data } = await getPartnerListAPI(this.partner)
-      // console.log(data)
-      this.partnerMsgList = data.currentPageRecords
+      try {
+        const { data } = await getPartnerListAPI(this.partner)
+        // console.log(data)
+        this.partnerMsgList = data.currentPageRecords
+      } catch {
+        throw new Error()
+      }
     },
     // 点击搜索框的时候根据供应商的名字获取所有数据
     searchPartnerReport(val) {
       // console.log(val)
-      this.$set(this.report, 'partnerName', val.partnerName)
-      if (val.value1[0] !== dayjs().startOf('month').format('YYYY-MM-DD') && val.value1[1] !== dayjs(new Date()).format('YYYY-MM-DD')) {
-        this.$set(this.report, 'start', dayjs(val.value1[0]).format('YYYY-MM-DD'))
-        this.$set(this.report, 'end', dayjs(val.value1[1]).format('YYYY-MM-DD'))
+      try {
+        this.$set(this.report, 'partnerName', val.partnerName)
+        if (val.value1[0] !== dayjs().startOf('month').format('YYYY-MM-DD') && val.value1[1] !== dayjs(new Date()).format('YYYY-MM-DD')) {
+          this.$set(this.report, 'start', dayjs(val.value1[0]).format('YYYY-MM-DD'))
+          this.$set(this.report, 'end', dayjs(val.value1[1]).format('YYYY-MM-DD'))
+        }
+        // console.log(this.report)
+        this.partnerCollect()
+        this.getTotalBill(val)
+        this.getOrderAmount(val)
+        this.getOrderCount(val)
+      } catch {
+        throw new Error()
       }
-      // console.log(this.report)
-      this.partnerCollect()
-      this.getTotalBill(val)
-      this.getOrderAmount(val)
-      this.getOrderCount(val)
     },
     // 根据供应商名字获取所有的分成数据
     async getTotalBill(val) {
-      const { data } = await getTotalBillAPI({ partnerId: val?.partner.id, start: `${this.report.start} 00:00:00`, end: `${this.report.end} 23:59:59` })
-      // console.log(data)
-      this.totalBill = (data / 100).toFixed(2)
+      try {
+        const { data } = await getTotalBillAPI({ partnerId: val?.partner.id, start: `${this.report.start} 00:00:00`, end: `${this.report.end} 23:59:59` })
+        // console.log(data)
+        this.totalBill = (data / 100).toFixed(2)
+      } catch {
+        throw new Error()
+      }
     },
     // 获取一定时间内的收入
     async getOrderAmount(val) {
-      const { data } = await getOrderAmountAPI(
-        { partnerId: val?.partner.id, start: `${this.report.start} 00:00:00`, end: `${this.report.end} 23:59:59` })
-      // console.log(data)
-      this.orderAmount = (data / 100).toFixed(2)
+      try {
+        const { data } = await getOrderAmountAPI(
+          { partnerId: val?.partner.id, start: `${this.report.start} 00:00:00`, end: `${this.report.end} 23:59:59` })
+        // console.log(data)
+        this.orderAmount = (data / 100).toFixed(2)
+      } catch {
+        throw new Error()
+      }
     },
     // 获取一定时间内的订单总数
     async getOrderCount(val) {
-      const { data } = await getOrderCountAPI({ partnerId: val?.partner.id, start: `${this.report.start} 00:00:00`, end: `${this.report.end} 23:59:59` })
-      // console.log(data)
-      this.orderCount = data
+      try {
+        const { data } = await getOrderCountAPI({ partnerId: val?.partner.id, start: `${this.report.start} 00:00:00`, end: `${this.report.end} 23:59:59` })
+        // console.log(data)
+        this.orderCount = data
+      } catch {
+        throw new Error()
+      }
     },
     toPrevPolicy(pageIndex) {
-      console.log(pageIndex)
+      // console.log(pageIndex)
       this.report.pageIndex = pageIndex
       this.partnerCollect()
     }
