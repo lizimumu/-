@@ -241,8 +241,6 @@ export default {
         this.dialogVisible = true
       } catch (e) {
         this.$message.fail(e.message)
-      } finally {
-        this.dialogVisible = false
       }
     },
     async toPrevPolicy() {
