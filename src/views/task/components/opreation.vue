@@ -60,7 +60,7 @@
       </el-table>
       <Paginate v-if="!tableData.length==0" :data="data" @update-data="UpdateData" />
       <!-- 查看详情 -->
-
+      <AddWorkOrder :dialog-visible="dialogVisible" />
     </div></div>
 
 </template>
@@ -69,11 +69,12 @@
 import search from '../../node/components/cpns/search.vue'
 import Paginate from '../../node/components/cpns/Paginate.vue'
 import { getJobSearchAPI, getAllTaskStatusAPI } from '@/api/task'
-
+import AddWorkOrder from './cpns/Addworkorder.vue'
 export default {
   components: {
     search,
-    Paginate
+    Paginate,
+    AddWorkOrder
   },
   data() {
     return {
@@ -83,6 +84,7 @@ export default {
         pageSize: 10,
         isRepair: true
       },
+      dialogVisible: false,
       data: {},
       options: []
     }
@@ -122,7 +124,7 @@ export default {
       this.data = data
     },
     newBuilt() {
-
+      this.dialogVisible = true
     },
     async  UpdateData(num) {
       console.log(num)
