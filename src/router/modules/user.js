@@ -21,6 +21,6 @@ export default
     path: 'user-work',
     name: 'User-Work',
     component: () => import('@/views/user/components/user-work.vue'),
-    meta: { title: '工作管理' }
+    meta: { title: '工作量列表' }
   }]
 }

@@ -5,7 +5,8 @@ export default {
     token: null,
     data: {},
     hrsaaTime: '',
-    userInfo: ''
+    userInfo: '',
+    dmdUserInfo: []
   },
   mutations: {
     SET_TOKEN(state, token) {
@@ -25,6 +26,9 @@ export default {
     },
     SET_HASAAS_TIME(state, hrsaaTime) {
       state.hrsaaTime = hrsaaTime
+    },
+    SET_DMDUSERINFO(state, data) {
+      state.dmdUserInfo = data
     }
   },
   // 发送异步请求
