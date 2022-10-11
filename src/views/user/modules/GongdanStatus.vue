@@ -40,6 +40,7 @@ export default {
   watch: {
     clickIndex() {
       // 索引一变化就自动调用这个函数
+
       this.$nextTick(() => {
         this.flag = true
       })
@@ -47,6 +48,7 @@ export default {
   },
   created() {
     // 这个是让一进页面就有日历数据
+
     this.changeMouth()
   },
   methods: {
